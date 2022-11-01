@@ -139,3 +139,9 @@ ex ()
 if [[ -z "$TMUX" ]]; then byobu; fi
 
 alias vim="nvim"
+alias gs="git status"
+alias gd="git diff"
+alias gdt="git difftool"
+alias gl="git log"
+alias ga="git add ."
+alias gp="git push"
