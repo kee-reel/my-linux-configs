@@ -4,9 +4,15 @@ if [[ $1 =~ 'h' ]]; then
     echo "USAGE: $0 [-hma]
 Connects to bluetooth device. 
     -h help
+    -r restart bluetooth
     -m manual device selection. If -m is not specified, then uses device id from ~/.headphones_bt_id file
     -a setup as Pulse audio default sink"
     exit
+fi
+
+if [[ $1 =~ 'r' ]]; then
+    echo 'Restarting bluetooth'
+    rfkill block bluetooth && rfkill unblock bluetooth
 fi
 
 echo "Starting scan"

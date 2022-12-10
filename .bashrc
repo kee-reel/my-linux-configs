@@ -138,6 +138,8 @@ ex ()
 }
 if [[ -z "$TMUX" ]]; then byobu; fi
 
+export PATH="$PATH:~/bin"
+
 alias vim="nvim"
 alias gs="git status"
 alias gd="git diff"
@@ -145,3 +147,9 @@ alias gdt="git difftool"
 alias gl="git log"
 alias ga="git add ."
 alias gp="git push"
+alias trans="trans -b"
+gc()
+{
+    git commit -m $@
+}
+

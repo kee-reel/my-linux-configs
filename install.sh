@@ -1,7 +1,5 @@
 #!/bin/bash
-for f in $(ls -a); do
-    if [[ $f != ".git" && $f != "install.sh" && $f != '.' && $f != '..' ]]; then
-        echo "Copy $f"
-        cp -r $f ~/
-    fi
+rsync -vaz ./.config/* ~/.config/
+for f in bin .bashrc .gitconfig; do
+    ln -s $(realpath $f) ~/$f
 done
