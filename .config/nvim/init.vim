@@ -14,11 +14,9 @@ set cc=100
 set laststatus=2
 set clipboard=unnamedplus
 set foldenable foldmethod=syntax foldlevelstart=99
-
+set splitbelow
+set splitright
 set path+=**
-let @g='0wveyA`json:""`hhpb~j0'
-
-command! MakeTags !ctags -R .
 
 filetype on
 filetype plugin on
@@ -27,8 +25,37 @@ filetype plugin indent on
 
 set langmap=ФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯ;ABCDEFGHIJKLMNOPQRSTUVWXYZ,фисвуапршолдьтщзйкыегмцчня;abcdefghijklmnopqrstuvwxyz
 
-nmap <F1> :tabe ~/.config/nvim/init.vim<CR>
-nmap <F2> :tabe ~/.bashrc<CR>
+vnoremap <C-V> "*p 
+vnoremap <C-C> "*y
+vnoremap p "_dP
+noremap do do]c
+noremap ]c ]czz
+noremap [c [czz
+noremap Y "+y
+noremap n nzz
 
-set nocompatible              " be iMproved, required
-filetype off                  " required
+map <C-n> :cn<CR>
+map <C-p> :cp<CR>
+map <A-]> :pop<CR>
+map <C-F> :Gr 
+map <C-T> :tabf 
+
+inoremap kj <Esc>
+command! UpdateVimrc source ~/.config/nvim/init.vim
+command! -nargs=1 Gr vimgrep /<args>/gj ./**
+command! Header vs %:r.h
+command! Src vs %:r.cpp
+
+noremap <Tab> gt
+noremap <S-Tab> gT
+nnoremap <C-J> <C-W>j
+nnoremap <C-K> <C-W>k
+nnoremap <C-L> <C-W>l
+nnoremap <C-H> <C-W>h
+
+map <C-\> :tab split<CR>:exec("tag ".expand("<cword>"))<CR>
+map <A-\> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
+set tags=./tags;/
+if &diff
+    set noreadonly
+endif

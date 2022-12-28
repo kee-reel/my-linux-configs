@@ -1,0 +1,34 @@
+#!/bin/bash
+if [[ -z "$PROJECT_PATH" ]]; then
+    echo "Set your $PROJECT_PATH variable in ~/.bashrc first:
+echo 'PROJECT_PATH=~/PATH_TO_PROJECT' >> .bashrc"
+    exit
+fi
+
+HOOK_PATH="$PROJECT_PATH/.git/hooks/pre-commit"
+if [[ -e $HOOK_PATH ]]; then
+    echo "You already have active pre-commit hook in '$HOOK_PATH'.
+Do you want to append to it? (y/N)"
+    read RESP
+    if [[ "$RESP" != 'y' ]]; then
+        echo 'Cancelled.'
+        exit
+    fi
+fi
+
+cat << EOF >> $HOOK_PATH
+#!/bin/bash
+echo 'Do you want to do stuff? (Y/n)'
+exec < /dev/tty
+read RESP
+if [[ \$RESP = 'n' ]]; then
+    echo 'Skiping stuff.'
+else
+    echo 'Running stuff...'
+    if false; then
+        exit 1
+    fi
+fi
+EOF
+chmod +x $HOOK_PATH
+echo "Added pre-commit hook in $HOOK_PATH"

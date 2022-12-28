@@ -1,0 +1,30 @@
+#!/bin/bash
+if [[ -z "$EDITOR" ]]; then
+    echo "Set your \$EDITOR variable in ~/.bashrc first:
+echo 'EDITOR=nvim' >> ~/.bashrc && source ~/.bashrc"
+    exit
+fi
+FILENAME=~/.commit_message
+if [[ ! -e $COMMIT_MESSAGE_PATH ]]; then
+    echo 'This is commit title example
+
+This is description of your commit. To continue just close the editor.' > $COMMIT_MESSAGE_PATH
+fi
+
+$EDITOR $(if [[ "$EDITOR" == 'code' ]]; then echo '-w'; fi) $COMMIT_MESSAGE_PATH
+MESSAGE="$(cat $COMMIT_MESSAGE_PATH)
+
+Issue: $(git branch | grep \* | tr -d '* ' | grep -oP '[a-z]+_\d+' | tr '_' '-' | tr '[:lower:]' '[:upper:]')"
+
+echo "===MESSAGE START===
+$MESSAGE
+===MESSAGE END===
+Create commit with following message? (y/N) "
+
+read RESP
+if [[ $RESP == "y" ]]; then
+    git commit -m "$MESSAGE"
+    echo 'Done.'
+else
+	echo 'Canceled.'
+fi

@@ -1,14 +1,13 @@
 [core]
-    editor = vim
+    editor = nvim
 [user]
 	email = c4rb0n_unit@protonmail.com
 	name = kee-reel
 [diff]
-    tool = vim
+    tool = vimdiff
     prompt = false
 [merge]
-    tool = vim
+    tool = vimdiff
     conflictstyle = diff3
 [mergetool]
-    prompt = false
     keepBackup = false

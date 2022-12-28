@@ -1,0 +1,15 @@
+#!/bin/bash
+
+OUT=$(xrandr --listactivemonitors | grep -Po '\*.+?\s' | tr -d '*')
+
+if (( $# == 0 )); then
+    # Try set suggested mode
+    xrandr --output $OUT --mode $(xrandr | grep ' +' | grep -Po '\d+x\d+')
+else
+    # Create new mode
+    MODE_DATA=$(cvt $1 $2 60 | tail -1 | sed 's/Modeline //g')
+    xrandr --newmode $MODE_DATA 2> /dev/null
+    MODE_NAME=$(echo $MODE_DATA | cut -d' ' -f 1)
+    xrandr --addmode $OUT $MODE_NAME
+    xrandr --output $OUT --mode $MODE_NAME
+fi

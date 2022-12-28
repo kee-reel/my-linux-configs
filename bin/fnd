@@ -1,0 +1,8 @@
+#!/bin/bash
+if [[ -z "$(dpkg -l | grep ripgrep)" ]] || [[ -z "$(dpkg -l | grep bat)" ]] || [[ -z "$(dpkg -l | grep fzf)" ]]; then
+    echo 'To use this tool you need to install "ripgrep", "bat" and "fzf" packages first:
+    sudo apt install ripgrep bat fzf'
+    exit
+fi
+
+find -L ./ -type f -iname "*$1*" 2>/dev/null | fzf-files 100

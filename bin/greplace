@@ -1,0 +1,5 @@
+#!/bin/bash
+for f in $(grep "$1" -R ./ | cut -d: -f 1 | uniq); do
+    echo "Replacing: $f with \"s|$2|$3|g\""
+    perl -i -0777 -pe "s|$2|$3|g" $f
+done

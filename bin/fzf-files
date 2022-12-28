@@ -1,0 +1,61 @@
+#!/bin/bash
+
+CONTEXT_SIZE="$(if (( $# > 0 )); then echo $1; else echo 20; fi)"
+
+read-data() {
+    if [[ ! -s $1 ]]; then
+        tail -F $1 & # Print all the lines added to cache, to dynamically update the list
+        while read l; do # Read from stdin and write to cache
+            echo $l >> $1
+        done
+    else
+        cat $SEARCH_CACHE
+    fi
+}
+
+get-line-context() {
+    FILENAME=$1
+    LINE_N=$2
+    CONTEXT_N=$3
+
+    START=$((LINE_N - CONTEXT_N))
+    if (( START <= 0 )); then START=1; fi
+    END=$((LINE_N + CONTEXT_N))
+    FILE_LEN=$(wc -l $FILENAME | cut -d' ' -f 1)
+    if (( END > FILE_LEN )); then END=$FILE_LEN; fi
+
+    echo "$START:$END"
+}
+
+has-line-numbers() {
+    if [[ -n $(echo $1 | sed 's/\x1B\[[0-9;]\{1,\}[A-Za-z]//g' | grep -P '^.+?:\d+:') ]]; then
+        echo 'true'
+    else
+        echo 'false'
+    fi
+}
+
+# So this functions is visible to batcat
+export -f get-line-context
+export -f has-line-numbers
+
+PREVIEW_PARAMS='if $(has-line-numbers {}); then F=$(echo {} | cut -d: -f 1); L=$(echo {} | cut -d: -f 2); else F={}; L=0; fi;'
+PREVIEW_CMD='batcat --style=numbers --color=always -H $L --line-range $(get-line-context $F $L '"$CONTEXT_SIZE"') $F'
+
+SEARCH_CACHE=$(mktemp)
+trap '{ rm "$SEARCH_CACHE"; }' EXIT # Remove cache on exit
+while true; do
+    RES=$(read-data $SEARCH_CACHE | fzf --cycle -e --ansi --preview-window=down:70% --preview "$PREVIEW_PARAMS $PREVIEW_CMD")
+    if [[ -z "$RES" ]]; then
+        break
+    fi
+    if $(has-line-numbers $RES); then
+        if [[ $EDITOR =~ n?vim ]]; then
+            $EDITOR +$(echo $RES | cut -d: -f 2) $(echo $RES | cut -d: -f 1)
+        else
+            $EDITOR $(echo $RES | cut -d: -f 1) 
+        fi
+    else
+        $EDITOR $RES
+    fi
+done
